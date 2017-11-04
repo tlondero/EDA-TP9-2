@@ -113,11 +113,13 @@
   <ItemGroup>
     <ClInclude Include="Channel.h" />
     <ClInclude Include="RSS.h" />
+    <ClInclude Include="titular.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Channel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RSS.cpp" />
+    <ClCompile Include="titular.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
