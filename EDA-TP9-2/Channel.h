@@ -1,11 +1,9 @@
 #pragma once
-
-//FALTA:
-// titular
-
 #include <string>
+#include <vector>
 #include "expat.h"
 #include "RSS.h"
+#include "titular.h"
 
 using namespace std;
 
