@@ -33,4 +33,3 @@ void STCallback(void * userData, XML_Char * tag, XML_Char ** vars)
 			ch->newState(I_TITLE);
 	}
 }
-
