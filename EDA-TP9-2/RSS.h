@@ -3,7 +3,9 @@
 #include <string>
 #include "expat.h"
 
-#define BEGIN_OF_RSS	'<'
+#define BEGIN_OF_RSS	"<rss"
+#define BEGIN_OF_RSS_SIZE 4
+
 #define END_OF_RSS		"</rss>"
 #define END_OF_RSS_SIZE 6
 
@@ -14,7 +16,8 @@ class RSS
 public:
 	RSS(string s);
 	string getRSS();
-	unsigned int RSSSize();
+	void takePathToRSS(string s);
+	unsigned int getSize();
 	bool succes();
 private:
 	string path;

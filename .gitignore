@@ -2,6 +2,13 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/EDA-TP9-2/v15/Browse.VC.opendb
 *.ipch
 .vs/EDA-TP9-2/v15/.suo
+*.ipch
+*.exe
+*.ilk
+*.pdb
+*.obj
+*.tlog
+*.idb
+*.ipch

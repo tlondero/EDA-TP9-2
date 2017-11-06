@@ -2,43 +2,62 @@
 
 RSS::RSS(string s)
 {
-	int i;
-	int j;
-	int k;
-	
-	for (i = 0; s[i] != BEGIN_OF_RSS; i++);			//Omito todo lo que se encuentra antes del RSS
+	takePathToRSS(s);
+	size = (unsigned int) path.size();
+	noError = true;
+}
 
-	char tempPath[6];
+void RSS::takePathToRSS(string s)
+{
+	int contadorString = 0;		//Contador del string
+
+	int contadorPath = 0;		//Contador exclusivo del path
+	int contadorPathAuxiliar;
+
+	char tempPathBegin[BEGIN_OF_RSS_SIZE + 1];
+	char tempPathEnd[END_OF_RSS_SIZE + 1];
+
+	for (contadorPathAuxiliar = 0; strcmp(tempPathBegin, BEGIN_OF_RSS); contadorPathAuxiliar++, contadorString++)
+	//Omito todo lo que se encuentra antes del RSS
+	{
+		tempPathBegin[contadorPathAuxiliar] = s[contadorString];
+
+		if (contadorPathAuxiliar >= BEGIN_OF_RSS_SIZE)
+		{
+			contadorPathAuxiliar = -1;
+			tempPathBegin[BEGIN_OF_RSS_SIZE] = '\0';
+			contadorString -= BEGIN_OF_RSS_SIZE;
+		}
+	}
+
+	contadorString -= 3;		//Arreglo el corrimiento del "<rs"
 
 	do
 	{
 		path.resize(path.size() + 1);
-		path[i] = s[i];
-		i++;
+		path[contadorPath] = s[contadorString];
+		contadorPath++;
 
-		for (j = 0; j < END_OF_RSS_SIZE; j++)			//Tomo los siguientes 6 caracteres
+		for (contadorPathAuxiliar = 0; contadorPathAuxiliar < END_OF_RSS_SIZE; contadorPathAuxiliar++)			//Tomo los siguientes 6 caracteres
 		{
-			tempPath[j] = s[i + j];
+			tempPathEnd[contadorPathAuxiliar] = s[contadorString + contadorPathAuxiliar];
 		}
+		tempPathEnd[contadorPathAuxiliar] = '\0';
+		contadorString++;
 
-		tempPath[j] = '\0';
+	} while (strcmp(tempPathEnd, END_OF_RSS));			//Chequea si se llego al fin del RSS
 
-	} while (!strcmp(tempPath, END_OF_RSS));			//Chequea si se llego al fin del RSS
-
-	for(k = 0; 0 < END_OF_RSS_SIZE; k++)			//Agrego el final del RSS
+	for (contadorPathAuxiliar = 0; contadorPathAuxiliar < END_OF_RSS_SIZE; contadorPathAuxiliar++)			//Agrego el final del RSS
 	{
 		path.resize(path.size() + 1);
-		path[i + k] = s[i + k];
+		path[contadorPath + contadorPathAuxiliar] = s[contadorString + contadorPathAuxiliar];
 	}
 
-	path[i + k] = '\0';
-
-	size = path.size();
-	noError = true;
+	path[contadorPath + contadorPathAuxiliar] = '\0';
 }
 
-std::string RSS::getRSS() { return path; }
+string RSS::getRSS() { return path; }
 
-unsigned int RSS::RSSSize() { return size; }
+unsigned int RSS::getSize() { return size; }
 
 bool RSS::succes() { return noError; }
