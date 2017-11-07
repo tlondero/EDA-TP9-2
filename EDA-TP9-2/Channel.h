@@ -7,7 +7,7 @@
 
 using namespace std;
 
-enum state {CH_TITLE, I_TITLE, I_UPBDATE, CHANNEL, ITEM, IDEL};
+enum state {I_TITLE, I_PUBDATE, ITEM, IDLE, CHANNEL_TITLE};
 
 class Channel
 {

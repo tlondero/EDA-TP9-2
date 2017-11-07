@@ -7,7 +7,7 @@ void CHCallback(void* userData, const XML_Char*s,int len);
 Channel::Channel(const char * l)
 {
 	parse = XML_ParserCreate(NULL);
-	state = IDEL;
+	state = IDLE;
 }
 
 Channel::~Channel()
@@ -62,11 +62,68 @@ titular Channel::getNextTitular()
 void STCallback(void * userData, const XML_Char * tag, const XML_Char ** vars)
 {
 	Channel * ch = (Channel *)userData;
-	if (to_string(ch->getNextTitular) == tag)
+	string s(tag);
+	if (s == "channel")
 	{
-		if (ch->getState() == CHANNEL)
-			ch->newState(CH_TITLE);
-		else if (ch->getState() == ITEM)
+		ch->newState(IDLE);
+	}
+	else if (s=="item")
+	{
+		ch->newState(ITEM);
+	}
+	else if (s == "title")
+	{
+		if ((ch->getState()) == IDLE)
+		{
+			ch->newState(CHANNEL_TITLE);//LLamar a la funcion que imprime en El LCD el titulo de la fuente de datos(En el chcallback).
+		}
+		else if ((ch->getState()) == ITEM)
+		{
 			ch->newState(I_TITLE);
+		}
+
+	}
+	else if (s == "pubDate")
+	{
+		if (ch->getState() == ITEM)
+		{
+			ch->newState(I_PUBDATE);
+		}
+	}
+}
+
+void ETCallback(void * userData, const XML_Char * tag)
+{
+	Channel * ch = (Channel *)userData;
+	string s(tag);
+	if (s == "channel")
+	{
+		//Creo que no hace falta nada.
+	}
+	else if (s == "item") //sale de un item
+	{
+		ch->newState(IDLE); 
+	}
+	else if (s == "title") 
+	{
+		if (ch->getState() == CHANNEL_TITLE) //sale del titulo del channel
+		{
+			ch->newState(IDLE); 
+		}
+		else if (ch->getState() == I_TITLE) //sale del titulo de un item
+		{
+			ch->newState(ITEM);
+		}
+	}
+	else if (s == "item") //sale de un item.
+	{
+		ch->newState(IDLE);
+	}
+	else if (s == "pubDate")
+	{
+		if (ch->getState() == I_PUBDATE) //Sale del pubdate de un item.
+		{
+			ch->newState(ITEM);
+		}
 	}
 }
