@@ -1,5 +1,9 @@
 #include "Channel.h"
 
+void STCallback(void * userData, const XML_Char * tag, const XML_Char ** vars);
+void ETCallback(void * userData, const XML_Char * tag);
+void CHCallback(void* userData, const XML_Char*s,int len);
+
 Channel::Channel(const char * l)
 {
 	parse = XML_ParserCreate(NULL);
@@ -21,7 +25,7 @@ void Channel::fetchTitles()
 	if (r.succes())
 	{
 		XML_Status status;
-		XML_Parser(parse, r.getRSS(), r.RSSSize(), true);
+		XML_Parse(parse, r.getRSS(), r.RSSSize(), true);
 		
 
 	}
@@ -53,4 +57,16 @@ titular Channel::getNextTitular()
 {
 
 
+}
+
+void STCallback(void * userData, const XML_Char * tag, const XML_Char ** vars)
+{
+	Channel * ch = (Channel *)userData;
+	if (to_string(ch->getNextTitular) == tag)
+	{
+		if (ch->getState() == CHANNEL)
+			ch->newState(CH_TITLE);
+		else if (ch->getState() == ITEM)
+			ch->newState(I_TITLE);
+	}
 }

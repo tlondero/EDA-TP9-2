@@ -7,7 +7,6 @@
 
 using namespace std;
 
-void STCallback(void * userData, XML_Char * tag, XML_Char ** vars);
 
 int main(int argc, char * argv)
 {
@@ -49,14 +48,3 @@ int main(int argc, char * argv)
 	return 0;
 }
 
-void STCallback(void * userData, XML_Char * tag, XML_Char ** vars)
-{
-	Channel * ch = (Channel *)userData;
-	if (to_string(ch->getNextTitular) == tag)
-	{
-		if (ch->getState() == CHANNEL)
-			ch->newState(CH_TITLE);
-		else if (ch->getState() == ITEM)
-			ch->newState(I_TITLE);
-	}
-}
