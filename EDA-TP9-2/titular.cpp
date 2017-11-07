@@ -11,6 +11,11 @@ titular::titular(char * title_, char * day_, char * month_, char * year_)
 	setDate(day_, month_, year_);
 }
 
+titular::titular(titular& ti)
+{
+	title = ti.title;
+	date = ti.date;
+}
 
 titular::~titular()
 {

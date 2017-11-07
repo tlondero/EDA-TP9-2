@@ -14,7 +14,7 @@ class Channel
 public:
 	Channel(const char * l = nullptr);
 	~Channel();
-	void fetchTitles(BasicLCD*);
+	void fetchTitles();
 	bool noError();
 	unsigned int getState();
 	const char * getErrorSt();

@@ -21,11 +21,11 @@ Channel::~Channel()
 	XML_ParserFree(parse);
 }
 
-void Channel::fetchTitles(BasicLCD* lcd)
+void Channel::fetchTitles()
 {
 	XML_SetElementHandler(parse, this->STCallback, this->ETCallback); //StartTitleCallback & EndTitleCallback
 	XML_SetCharacterDataHandler(parse, this->CHCallback);
-	XML_SetUserData(parse, lcd); //Habria que cmbiar el userdaa por un basicld referencia.
+	XML_SetUserData(parse, nullptr); //Habria que cmbiar el userdaa por un basicld referencia.
 	RSS r(link);
 
 	if (r.succes())
@@ -84,7 +84,7 @@ void Channel::STCallback(void * userData, const XML_Char * tag, const XML_Char *
 	{
 		if ((this->getState()) == IDLE)
 		{
-			this->newState(CHANNEL_TITLE);//LLamar a la funcion que imprime en El LCD el titulo de la fuente de datos(En el chcallback).
+			this->newState(CHANNEL_TITLE);
 		}
 		else if ((this->getState()) == ITEM)
 		{
@@ -123,10 +123,6 @@ void  Channel::ETCallback(void * userData, const XML_Char * tag)
 			this->newState(ITEM);
 		}
 	}
-	else if (s == "item") //sale de un item.
-	{
-		this->newState(IDLE);
-	}
 	else if (s == "pubDate")
 	{
 		if (this->getState() == I_PUBDATE) //Sale del pubdate de un item.
@@ -144,10 +140,7 @@ void  Channel::CHCallback(void* userData, const XML_Char*s, int len)
 	{
 		if ((this->getState()) == CHANNEL_TITLE)
 		{
-			for (int i = 0; i < len; i++)
-			{
-				//llamar al display del lcd con cada caracter que forma el nombre.
-			}
+			//Habria que guardar el titulo del channel en algun lado?
 		}
 		else if ((this->getState()) == I_TITLE)
 		{
