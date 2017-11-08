@@ -1,7 +1,13 @@
 #pragma once
 
 #include <string>
-#include "expat.h"
+//#include "expat.h"
+
+#define BEGIN_OF_RSS	"<rss"
+#define BEGIN_OF_RSS_SIZE 4
+
+#define END_OF_RSS		"</rss>"
+#define END_OF_RSS_SIZE 6
 
 using namespace std;
 
@@ -23,4 +29,5 @@ private:
 	string reduceStringFromTheEnd(unsigned int newSize, string & str2change);
 	void obtainRssFromWeb(char * link_);
 	void filterRSS(string & completeRSS);
+	bool rssWasNotFound(char * buf); //avisa con true si no se encontro el rss
 };

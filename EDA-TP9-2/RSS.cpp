@@ -1,6 +1,6 @@
 #include "RSS.h"
-
 #include "webHandler.h"
+
 
 #define CANT_MAX_OF_TRIES_TO_READ_RSS 100
 #define MAX_MARGEN_TO_END_RSS 100
@@ -12,20 +12,17 @@
 #define CR 13
 #define LF 10
 
-#define BEGIN_OF_RSS	"<rss"
-#define BEGIN_OF_RSS_SIZE 4
-
-#define END_OF_RSS		"</rss>"
-#define END_OF_RSS_SIZE 6
-
 RSS::RSS(char * link_)
 {
 	noError = true;
 	errorMessage = "there is no error, IT´S ALL OK!";
 	obtainRssFromWeb(link_); //en caso de que no se logre esta función, se cambia internamente el estado de noError y errorMessage
-	filterRSS(rss);
-	size = (unsigned int)rss.size();
+	if (noError)
+	{
+		filterRSS(rss);
+	}
 	
+	size = (unsigned int)rss.size();
 	
 }
 
@@ -58,15 +55,24 @@ void RSS::obtainRssFromWeb(char * link_)
 								 //ahora escucho
 	string mergeBuf;
 	unsigned int tries = 0;
+	bool firstTime = true;
 	do								//leo hasta obtener todo el archivo que termina con "</rss>"
 	{
 		tries++;
 		httpHandler.read_from_port();
 		mergeBuf += httpHandler.get_buf();
+		if (firstTime)
+		{
+			if (rssWasNotFound(httpHandler.get_buf()))
+			{
+				tries = CANT_MAX_OF_TRIES_TO_READ_RSS; //fuerzo irme
+			}
+			firstTime = false;
+		}
 	} while ((!finishedWith("</rss>", mergeBuf)) && (tries < CANT_MAX_OF_TRIES_TO_READ_RSS));
 
 
-	if (tries > CANT_MAX_OF_TRIES_TO_READ_RSS)
+	if (tries >= CANT_MAX_OF_TRIES_TO_READ_RSS)
 	{
 		noError = false;
 		errorMessage = "error obtaining rss from web";
@@ -88,7 +94,6 @@ void RSS::filterRSS(string & completeRSS)
 	int contadorPathAuxiliar;
 
 	char tempPathBegin[BEGIN_OF_RSS_SIZE + 1];
-	char tempPathEnd[END_OF_RSS_SIZE + 1];
 
 	for (contadorPathAuxiliar = 0; strcmp(tempPathBegin, BEGIN_OF_RSS); contadorPathAuxiliar++, contadorString++)
 		//Omito todo lo que se encuentra antes del RSS
@@ -106,7 +111,7 @@ void RSS::filterRSS(string & completeRSS)
 	contadorString -= 3;		//Arreglo el corrimiento del "<rs"
 
 	rss = completeRSS.substr(contadorString, completeRSS.size());
-	
+
 	for (unsigned int i = 0; i < rss.size(); i++)
 	{
 		switch (rss[i])
@@ -156,7 +161,7 @@ void RSS::filterRSS(string & completeRSS)
 			rss.insert(++i, 1, 'I');
 			break;
 		default:
-			if(rss[i] >= 128)
+			if (rss[i] >= 128)
 				rss[i] = '?';
 		}
 	}
@@ -164,30 +169,6 @@ void RSS::filterRSS(string & completeRSS)
 	size = rss.size();
 
 
-	/*
-	do
-	{
-		rss.resize(rss.size() + 1);
-		rss[contadorPath] = completeRSS[contadorString];
-		contadorPath++;
-
-		for (contadorPathAuxiliar = 0; contadorPathAuxiliar < END_OF_RSS_SIZE; contadorPathAuxiliar++)			//Tomo los siguientes 6 caracteres
-		{
-			tempPathEnd[contadorPathAuxiliar] = completeRSS[contadorString + contadorPathAuxiliar];
-		}
-		tempPathEnd[contadorPathAuxiliar] = '\0';
-		contadorString++;
-
-	} while (strcmp(tempPathEnd, END_OF_RSS));			//Chequea si se llego al fin del RSS
-
-	for (contadorPathAuxiliar = 0; contadorPathAuxiliar < END_OF_RSS_SIZE; contadorPathAuxiliar++)			//Agrego el final del RSS
-	{
-		rss.resize(rss.size() + 1);
-		rss[contadorPath + contadorPathAuxiliar] = completeRSS[contadorString + contadorPathAuxiliar];
-	}
-
-	rss[contadorPath + contadorPathAuxiliar] = '\0';
-	*/
 }
 
 string & RSS::getRSS() { return rss; }
@@ -203,13 +184,17 @@ string & RSS::getErrorMessage(void)
 
 void RSS::translateLink(string & link, string & host, string & route)
 {
-	size_t n = link.find_first_of("/"); //se le podrian agregar mas caracteres segun cuales usan otros sistemas operativos
+	int n = link.find_first_of("/"); //se le podrian agregar mas caracteres segun cuales usan otros sistemas operativos
 
 	if (n > 0)
 	{
 		size_t distance2end = link.size() - n;
 		host = link.substr(0, n);
 		route = link.substr(n, distance2end);
+	}
+	else
+	{
+		host = link;
 	}
 
 }
@@ -239,4 +224,20 @@ string RSS::reduceStringFromTheEnd(unsigned int newSize, string & str2change)
 	{
 		return str2change;
 	}
+}
+
+bool RSS::rssWasNotFound(char * buf)
+{
+	bool ret = false;
+	string strAux = buf;
+	int n = strAux.find_first_of('\n');
+	string firstLine = strAux.substr(0, n);
+	int found01 = firstLine.find("NOT FOUND");
+	int found02 = firstLine.find("Not Found");
+	int found03 = firstLine.find("not found");
+	if ((found01 != string::npos) || (found02 != string::npos) || (found03 != string::npos))
+	{
+		ret = true;
+	}
+	return ret;
 }
