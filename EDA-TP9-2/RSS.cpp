@@ -12,6 +12,12 @@
 #define CR 13
 #define LF 10
 
+#define BEGIN_OF_RSS	"<rss"
+#define BEGIN_OF_RSS_SIZE 4
+
+#define END_OF_RSS		"</rss>"
+#define END_OF_RSS_SIZE 6
+
 RSS::RSS(char * link_)
 {
 	noError = true;
@@ -99,6 +105,66 @@ void RSS::filterRSS(string & completeRSS)
 
 	contadorString -= 3;		//Arreglo el corrimiento del "<rs"
 
+	rss = completeRSS.substr(contadorString, completeRSS.size());
+	
+	for (unsigned int i = 0; i < rss.size(); i++)
+	{
+		switch (rss[i])
+		{
+		case'á':
+			rss[i] = 'a';
+			break;
+		case'é':
+			rss[i] = 'e';
+			break;
+		case'í':
+			rss[i] = 'i';
+			break;
+		case'ó':
+			rss[i] = 'o';
+			break;
+		case'ú':
+			rss[i] = 'u';
+			break;
+		case'ü':
+			rss[i] = 'u';
+			break;
+		case'ñ':
+			rss[i] = 'n';
+			rss.insert(++i, 1, 'i');
+			break;
+		case'Á':
+			rss[i] = 'A';
+			break;
+		case'É':
+			rss[i] = 'E';
+			break;
+		case'Í':
+			rss[i] = 'I';
+			break;
+		case'Ó':
+			rss[i] = 'O';
+			break;
+		case'Ú':
+			rss[i] = 'U';
+			break;
+		case'Ü':
+			rss[i] = 'U';
+			break;
+		case'Ñ':
+			rss[i] = 'N';
+			rss.insert(++i, 1, 'I');
+			break;
+		default:
+			if(rss[i] >= 128)
+				rss[i] = '?';
+		}
+	}
+
+	size = rss.size();
+
+
+	/*
 	do
 	{
 		rss.resize(rss.size() + 1);
@@ -121,6 +187,7 @@ void RSS::filterRSS(string & completeRSS)
 	}
 
 	rss[contadorPath + contadorPathAuxiliar] = '\0';
+	*/
 }
 
 string & RSS::getRSS() { return rss; }
