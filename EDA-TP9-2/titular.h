@@ -12,7 +12,7 @@ class titular
 public:
 	titular(); //luego de este constructor hay que llamar a los setters de manera explícita
 	titular(char * title_, char * day_, char * month_, char * year_); //constructor que hace los setters implicitamente
-	titular(titular&);
+	titular(const titular&);
 	char * getTitle(void);
 	date_t & getDate(void);
 	void setTitle(char * title_);

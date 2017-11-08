@@ -11,7 +11,7 @@ titular::titular(char * title_, char * day_, char * month_, char * year_)
 	setDate(day_, month_, year_);
 }
 
-titular::titular(titular& ti)
+titular::titular(const titular& ti)
 {
 	title = ti.title;
 	date = ti.date;
@@ -23,7 +23,7 @@ titular::~titular()
 
 char * titular::getTitle(void)
 {
-	return &((title.c_str())[0]);  //retorna la direccion de memoria del primer caracter del string (de otra forma algunos compiladores se quejarían)
+	return (char*)((title.c_str()));  //retorna la direccion de memoria del primer caracter del string (de otra forma algunos compiladores se quejarían)
 }
 date_t & titular::getDate(void)
 {

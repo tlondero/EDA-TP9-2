@@ -14,24 +14,27 @@ Channel::Channel(const char * l)
 	parse = XML_ParserCreate(NULL);
 	state = IDLE;
 	TitPos = 0;
-}
+	p_STCallback = &(STCallback);
 
+}
 Channel::~Channel()
 {
 	XML_ParserFree(parse);
 }
 
+XML_StartElementHandler
 void Channel::fetchTitles()
 {
-	XML_SetElementHandler(parse, this->STCallback, this->ETCallback); //StartTitleCallback & EndTitleCallback
-	XML_SetCharacterDataHandler(parse, this->CHCallback);
+	XML_StartElementHandler p = (XML_StartElementHandler)(this->p_STCallback);
+	XML_SetElementHandler(parse, (this->p_STCallback), this->p_ETCallback); //StartTitleCallback & EndTitleCallback
+	XML_SetCharacterDataHandler(parse, this->p_CHCallback);
 	XML_SetUserData(parse, nullptr); //Habria que cmbiar el userdaa por un basicld referencia.
-	RSS r(link);
+	RSS r((char*)link.c_str());
 
 	if (r.succes())
 	{
 		XML_Status status;
-		XML_Parse(parse, r.getRSS().c_str(), r.getSize(), true);
+		status = XML_Parse(parse, r.getRSS().c_str(), r.getSize(), true);
 		
 
 	}
@@ -57,11 +60,15 @@ bool Channel::titlesEmpty()
 		return false;
 }
 
-bool Channel::newState(unsigned int newState) { state = newState; }
+bool Channel::newState(unsigned int newState)
+{ 
+	state = newState; 
+	return true;
+}
 
 titular Channel::getNextTitular()
 {
-
+	return titles[TitPos++];
 
 }
 
