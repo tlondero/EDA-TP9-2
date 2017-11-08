@@ -3,12 +3,6 @@
 #include <string>
 #include "expat.h"
 
-#define BEGIN_OF_RSS	"<rss"
-#define BEGIN_OF_RSS_SIZE 4
-
-#define END_OF_RSS		"</rss>"
-#define END_OF_RSS_SIZE 6
-
 using namespace std;
 
 class RSS
