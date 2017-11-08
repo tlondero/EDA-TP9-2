@@ -31,13 +31,10 @@ private:
 	titular tempTit;
 	vector <titular> titles;
 	unsigned int TitPos; //posicion de la tit actual
-	void(Channel::*p_STCallback)(void * userData, const XML_Char * tag, const XML_Char ** vars);
-	void(*p_ETCallback);
-	void*p_CHCallback);
 
-	 void STCallback(void * userData, const XML_Char * tag, const XML_Char ** vars);
-	 void ETCallback(void * userData, const XML_Char * tag);
-	virtual void CHCallback(void* userData, const XML_Char*s, int len);
+	friend void STCallback(void * userData, const XML_Char * tag, const XML_Char ** vars);
+	friend void ETCallback(void * userData, const XML_Char * tag);
+	friend void CHCallback(void* userData, const XML_Char*s, int len);
 	
 	
 };
